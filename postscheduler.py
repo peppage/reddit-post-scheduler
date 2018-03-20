@@ -1,9 +1,16 @@
 # http://flask.pocoo.org/docs/0.12/
-from flask import redirect, Flask, render_template, session, request, flash, url_for
+from flask import redirect, Flask, render_template, session, request, flash, url_for, g, jsonify, request
 import ConfigParser  # https://docs.python.org/2/library/configparser.html
 import praw  # https://praw.readthedocs.io/en/latest/index.html
 import uuid
 from functools import wraps
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from json_encoder import AlchemyEncoder
+from models import Post
+from base import Session, engine, Base
+
 
 # Todo
 # Schedule non theme posts
@@ -14,11 +21,12 @@ client_id = config.get('Reddit', 'client_id')
 client_secret = config.get('Reddit', 'client_secret')
 redirect_uri = config.get('Reddit', 'redirect_uri')
 user_agent = config.get('Reddit', 'user_agent')
-secret_key = config.get('App', 'secret_key')
 subreddit = config.get('App', 'subreddit')
 
 app = Flask(__name__)
-app.secret_key = secret_key
+app.secret_key = config.get('App', 'secret_key')
+app.json_encoder = AlchemyEncoder
+Base.metadata.create_all(engine)
 
 
 def login_required(function_to_protect):
@@ -34,18 +42,18 @@ def login_required(function_to_protect):
     return wrapper
 
 
-@app.route("/")
+@app.route('/')
 @login_required
 def index():
     return "index"
 
 
-@app.route("/login")
+@app.route('/login')
 def login():
     return render_template('login.html')
 
 
-@app.route("/reddit")
+@app.route('/reddit')
 def redditLogin():
     reddit = getReddit()
     state = str(uuid.uuid4())
@@ -54,13 +62,13 @@ def redditLogin():
     return redirect(url)
 
 
-@app.route("/login/callback")
+@app.route('/login/callback')
 def redditCallback():
     code = request.args.get('code')
     state = request.args.get('state')
 
     if state != session['reddit_state']:
-        flash('Failed to login with reddit', 'error')
+        flash("Failed to login with reddit", 'error')
         return redirect(url_for('login'))
 
     reddit = getReddit()
@@ -76,8 +84,22 @@ def redditCallback():
         session['user_id'] = reddit.user.me().name
         return redirect(url_for('index'))
 
-    flash('You are not a Mod of the correct subreddit')
+    flash("You are not a Mod of the correct subreddit")
     return redirect('/')
+
+
+@app.route('/posts')
+def Posts():
+    s = Session()
+    return jsonify(s.query(Post).all())
+
+
+@app.route('/post/<int:post_id>', methods=['GET', 'POST'])
+def PostApi(post_id):
+    if request.method == 'GET':
+        s = Session()
+        q = s.query(Post).filter(Post.id == post_id)
+        return jsonify(q.one())
 
 
 def getReddit():
