@@ -10,8 +10,11 @@ class Post(Base):
     user = Column(String(30), nullable=False)
     title = Column(String(30), nullable=False)
 
-    def __init__(self, text):
+    def __init__(self, text, date, user, title):
         self.text = text
+        self.date = date
+        self.user = user
+        self.title = title
 
     def __json__(self):
         return ['text', 'date', 'user', 'title']

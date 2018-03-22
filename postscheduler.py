@@ -7,6 +7,7 @@ from functools import wraps
 from json_encoder import AlchemyEncoder
 from models import Post
 from base import Session, engine, Base
+from datetime import datetime
 
 
 # Todo
@@ -96,7 +97,32 @@ def PostApi(post_id):
     if request.method == 'GET':
         s = Session()
         q = s.query(Post).filter(Post.id == post_id)
+        s.close()
         return jsonify(q.one())
+    elif request.method == 'POST':
+        s = Session()
+        post = s.query(Post).filter(Post.id == post_id).one()
+        post.text = request.form['text']
+        post.date = datetime.strptime(request.form['date'], '%Y-%m-%d')
+        post.user = request.form['user']
+        post.title = request.form['title']
+        s.commit()
+        s.close()
+        return jsonify()
+
+
+@app.route('/post', methods=['POST'])
+def AddPost():
+    s = Session()
+    text = request.form['text']
+    date = datetime.strptime(request.form['date'], '%Y-%m-%d')
+    user = request.form['user']
+    title = request.form['title']
+    p = Post(text, date, user, title)
+    s.add(p)
+    s.commit()
+    s.close()
+    return jsonify()
 
 
 def getReddit():
