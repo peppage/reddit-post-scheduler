@@ -4,9 +4,6 @@ import ConfigParser  # https://docs.python.org/2/library/configparser.html
 import praw  # https://praw.readthedocs.io/en/latest/index.html
 import uuid
 from functools import wraps
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from json_encoder import AlchemyEncoder
 from models import Post
 from base import Session, engine, Base
