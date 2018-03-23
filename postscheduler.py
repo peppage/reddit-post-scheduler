@@ -43,7 +43,7 @@ def login_required(function_to_protect):
 @app.route('/')
 @login_required
 def index():
-    return "index"
+    return render_template("index.html")
 
 
 @app.route('/login')
