@@ -17,4 +17,4 @@ class Post(Base):
         self.title = title
 
     def __json__(self):
-        return ['text', 'date', 'user', 'title']
+        return ['text', 'date', 'user', 'title', 'id']
