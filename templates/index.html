@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <section class="ps-posts-list">
-        <div class="post" v-for="d in dates">
-            <span v-html="d.display"></span>
-            <div v-for="p in d.posts" v-if="d.posts.length > 0">
-                <span v-html="p.title"></span>
-                <span><a href="#" v-on:click.prevent="editTheme(p.id)">Edit<a></span>
-            </div>
-            <div v-if="d.posts.length === 0">
-                <button v-on:click.prevent="addTheme()">Add a theme!</button>
+    <div id="app">
+        <router-view></router-view>
+    </div>
+
+    <script type="text/x-template" id="calendarList">
+        <div class="ps-posts-list">
+            <div class="post" v-for="d in dates">
+                <span v-html="d.display"></span>
+                <div v-for="p in d.posts" v-if="d.posts.length > 0">
+                    <span v-html="p.title"></span>
+                    <span><a href="#" v-on:click.prevent="editTheme(p.id)">Edit</a></span>
+                </div>
+                <div v-if="d.posts.length === 0">
+                    <button v-on:click.prevent="addTheme()">Add a theme!</button>
+                </div>
             </div>
         </div>
-    </section>
+    </script>
+    
 {% endblock %}

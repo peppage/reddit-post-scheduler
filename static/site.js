@@ -1,9 +1,13 @@
 if (window.Vue) {
-  var postList = new Vue({
-    el: '.ps-posts-list',
-    data: {
-      dates: [],
-      days: 14,
+  Vue.use(VueRouter);
+
+  var postList = Vue.component('calendar-list', {
+    template: '#calendarList',
+    data() {
+      return {
+        dates: [],
+        days: 14,
+      };
     },
     created: function() {
       var self = this;
@@ -43,6 +47,18 @@ if (window.Vue) {
       addTheme: function() {},
     },
   });
+
+  const routes = [{ path: '/', component: postList }];
+
+  const router = new VueRouter({
+    routes,
+  });
+
+  const app = new Vue({
+    router,
+  }).$mount('#app');
+
+  /* Utility functions */
 
   // Format the date for our requirements as year-month-day
   function formatDate(date) {
