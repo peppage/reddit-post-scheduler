@@ -11,7 +11,9 @@
                 <span v-html="d.display"></span>
                 <div v-for="p in d.posts" v-if="d.posts.length > 0">
                     <span v-html="p.title"></span>
-                    <span><a href="#" v-on:click.prevent="editTheme(p.id)">Edit</a></span>
+                    <span>
+                        <router-link :to="'/post/'+p.id">Edit</router-link>
+                    </span>
                 </div>
                 <div v-if="d.posts.length === 0">
                     <router-link :to="'/post/new?d=' + d.query">Add a theme!</router-link>
@@ -20,8 +22,8 @@
         </div>
     </script>
 
-    <script type="text/x-template" id="newPost">
-        <div class="ps-newPost">
+    <script type="text/x-template" id="post">
+        <div class="ps-post">
             <h1>Schedule a theme</h1>
             <div>
                 <label>User:</label>

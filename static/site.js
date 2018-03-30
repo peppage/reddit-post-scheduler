@@ -17,7 +17,7 @@ if (window.Vue) {
           month: m.month(),
           day: m.date(),
           display: m.format('dddd, MMMM Do YYYY'),
-          query: m.format('YYYY-mm-DD'),
+          query: m.format('YYYY-MM-DD'),
           posts: [],
         });
       }
@@ -51,7 +51,7 @@ if (window.Vue) {
   });
 
   var newPost = Vue.component('new-post', {
-    template: '#newPost',
+    template: '#post',
     props: ['date'],
     data() {
       return {
@@ -85,9 +85,64 @@ if (window.Vue) {
     },
   });
 
+  var editPost = Vue.component('edit-post', {
+    template: '#post',
+    props: ['id'],
+    data() {
+      return {
+        title: '',
+        spoiler: '',
+        user: '',
+        text: '',
+        date: '',
+      };
+    },
+    created: function() {
+      var self = this;
+
+      fetch('/api/post/' + self.id)
+        .then(function(response) {
+          return response.json();
+        })
+        .catch(error => console.error('Error:', error))
+        .then(function(json) {
+          self.title = json.title;
+          self.spoiler = json.spoiler;
+          self.user = json.user;
+          self.text = json.text;
+          var m = new moment(json.date);
+          console.log(m.day());
+          self.date = m.utc().format('YYYY-MM-DD');
+        });
+    },
+    methods: {
+      savePost: function() {
+        var self = this;
+
+        var formData = new FormData();
+        formData.append('title', self.title);
+        formData.append('spoiler', self.spoiler);
+        formData.append('user', self.user);
+        formData.append('text', self.text);
+        formData.append('date', self.date);
+
+        fetch('/api/post/' + self.id, {
+          method: 'POST',
+          body: formData,
+        })
+          .then(response => response.json())
+          .catch(error => console.error('Error:', error))
+          .then(function(json) {
+            router.push({ path: '/' });
+          });
+      },
+    },
+  });
+
   const routes = [
     { path: '/', component: postList },
     { path: '/post/new', component: newPost, props: route => ({ date: route.query.d }) },
+    { path: '/post/:id', component: editPost, props: route => ({ id: route.params.id }) },
   ];
 
   const router = new VueRouter({

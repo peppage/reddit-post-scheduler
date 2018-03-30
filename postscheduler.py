@@ -15,6 +15,9 @@ from datetime import datetime
 # api endpoint for announcing the theme
 # make fridays obvious
 # show holidays
+# search for dupes
+# add who created the post to the db
+# last edited the post (versioning?)
 
 
 config = ConfigParser.RawConfigParser()
