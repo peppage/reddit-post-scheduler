@@ -17,6 +17,7 @@ if (window.Vue) {
           month: m.month(),
           day: m.date(),
           display: m.format('dddd, MMMM Do YYYY'),
+          query: m.format('YYYY-mm-DD'),
           posts: [],
         });
       }
@@ -29,6 +30,7 @@ if (window.Vue) {
         .then(function(response) {
           return response.json();
         })
+        .catch(error => console.error('Error:', error))
         .then(function(json) {
           json.forEach(function(p) {
             var postDate = moment(p.date);
@@ -48,7 +50,45 @@ if (window.Vue) {
     },
   });
 
-  const routes = [{ path: '/', component: postList }];
+  var newPost = Vue.component('new-post', {
+    template: '#newPost',
+    props: ['date'],
+    data() {
+      return {
+        title: '',
+        spoiler: '',
+        user: '',
+        text: '',
+      };
+    },
+    methods: {
+      savePost: function() {
+        var self = this;
+
+        var formData = new FormData();
+        formData.append('title', self.title);
+        formData.append('spoiler', self.spoiler);
+        formData.append('user', self.user);
+        formData.append('text', self.text);
+        formData.append('date', self.date);
+
+        fetch('/api/post', {
+          method: 'POST',
+          body: formData,
+        })
+          .then(response => response.json())
+          .catch(error => console.error('Error:', error))
+          .then(function(json) {
+            router.push({ path: '/' });
+          });
+      },
+    },
+  });
+
+  const routes = [
+    { path: '/', component: postList },
+    { path: '/post/new', component: newPost, props: route => ({ date: route.query.d }) },
+  ];
 
   const router = new VueRouter({
     routes,

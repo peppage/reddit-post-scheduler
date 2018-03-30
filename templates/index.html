@@ -14,9 +14,37 @@
                     <span><a href="#" v-on:click.prevent="editTheme(p.id)">Edit</a></span>
                 </div>
                 <div v-if="d.posts.length === 0">
-                    <button v-on:click.prevent="addTheme()">Add a theme!</button>
+                    <router-link :to="'/post/new?d=' + d.query">Add a theme!</router-link>
                 </div>
             </div>
+        </div>
+    </script>
+
+    <script type="text/x-template" id="newPost">
+        <div class="ps-newPost">
+            <h1>Schedule a theme</h1>
+            <div>
+                <label>User:</label>
+                <input type="text" name="user" v-model="user">
+            </div>
+            <div>
+                <label>Title</label>
+                <input type="text" name="title" v-model="title">
+            </div>
+            <div>
+                <label>Spoiler</label>
+                <input type="text" name="spoiler" v-model="spoiler">
+            </div>
+            <div>
+                <label>Text</label>
+                <textarea v-model="text"></textarea>
+            </div>
+            <div>
+                <label>Date</label>
+                <input type="text" name="date" v-model="date">
+            </div>
+
+            <button @click="savePost">Submit</button>
         </div>
     </script>
     
