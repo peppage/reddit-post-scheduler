@@ -61,6 +61,9 @@ if (window.Vue) {
         text: '',
       };
     },
+    created: function() {
+      this.title += moment(this.date).format('MMM Do -');
+    },
     computed: {
       formattedText: function() {
         return SnuOwnd.getParser().render(this.text);
