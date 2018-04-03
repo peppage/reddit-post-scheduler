@@ -1,0 +1,135 @@
+/*! minireset.css v0.0.3 | MIT License | github.com/jgthms/minireset.css */
+html,
+body,
+p,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend,
+textarea,
+pre,
+iframe,
+hr,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 100%;
+  font-weight: normal;
+}
+ul {
+  list-style: none;
+}
+button,
+input,
+select,
+textarea {
+  margin: 0;
+}
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+img,
+embed,
+iframe,
+object,
+audio,
+video {
+  height: auto;
+  max-width: 100%;
+}
+iframe {
+  border: 0;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+td,
+th {
+  padding: 0;
+  text-align: left;
+}
+
+/* end minireset */
+
+#app {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+
+  padding-top: 4rem;
+}
+
+.ps-posts-list {
+}
+
+.ps-posts-list .post {
+  padding-bottom: 1rem;
+}
+
+.error {
+  padding: 1rem;
+  background-color: #d63031;
+  color: #fff;
+}
+
+a {
+  color: #0984e3;
+}
+
+a:hover {
+  color: #74b9ff;
+}
+
+h3 {
+  font-weight: 400;
+  line-height: 1.125;
+  font-size: 1.5em;
+  margin-bottom: 0.6666em;
+}
+
+.button {
+  background-color: #0984e3;
+  border-color: transparent;
+  color: #fff;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  height: 2.25em;
+  cursor: pointer;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.button:hover {
+  color: #fff;
+  background-color: #74b9ff;
+}
