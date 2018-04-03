@@ -47,9 +47,6 @@ if (window.Vue) {
             for (var p of json) {
               var postDate = moment(p.date).utc();
               for (var d of self.dates) {
-                console.debug(
-                  'postDate: ' + postDate.month() + ' ' + postDate.date() + ' date: ' + d.month + ' ' + d.day,
-                );
                 if (d.month == postDate.month() && d.day == postDate.date()) {
                   d.posts.push(p);
                   break;
