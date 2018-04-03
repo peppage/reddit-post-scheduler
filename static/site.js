@@ -65,6 +65,9 @@ if (window.Vue) {
       formattedText: function() {
         return SnuOwnd.getParser().render(this.text);
       },
+      prettyDate: function() {
+        return moment(self.date).format('dddd, MMMM Do YYYY');
+      },
     },
     methods: {
       savePost: function() {
@@ -116,13 +119,15 @@ if (window.Vue) {
           self.user = json.user;
           self.text = json.text;
           var m = new moment(json.date);
-          console.log(m.day());
           self.date = m.utc().format('YYYY-MM-DD');
         });
     },
     computed: {
       formattedText: function() {
         return SnuOwnd.getParser().render(this.text);
+      },
+      prettyDate: function() {
+        return moment(self.date).format('dddd, MMMM Do YYYY');
       },
     },
     methods: {
