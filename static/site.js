@@ -61,6 +61,11 @@ if (window.Vue) {
         text: '',
       };
     },
+    computed: {
+      formattedText: function() {
+        return SnuOwnd.getParser().render(this.text);
+      },
+    },
     methods: {
       savePost: function() {
         var self = this;
@@ -114,6 +119,11 @@ if (window.Vue) {
           console.log(m.day());
           self.date = m.utc().format('YYYY-MM-DD');
         });
+    },
+    computed: {
+      formattedText: function() {
+        return SnuOwnd.getParser().render(this.text);
+      },
     },
     methods: {
       savePost: function() {
