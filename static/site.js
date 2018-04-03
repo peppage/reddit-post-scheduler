@@ -1,52 +1,73 @@
 if (window.Vue) {
   Vue.use(VueRouter);
 
+  var longDateFormat = 'dddd, MMMM Do YYYY';
+  var pythonDateFormat = 'YYYY-MM-DD';
+
   var postList = Vue.component('calendar-list', {
     template: '#calendarList',
     data() {
       return {
+        start: moment(),
         dates: [],
         days: 14,
       };
     },
     created: function() {
-      var self = this;
-      for (var i = 0; i < self.days - 1; i++) {
-        var m = moment().add(i, 'days');
-        self.dates.push({
-          month: m.month(),
-          day: m.date(),
-          display: m.format('dddd, MMMM Do YYYY'),
-          query: m.format('YYYY-MM-DD'),
-          posts: [],
-        });
-      }
-
-      var params = '?';
-      params += 'start=' + formatDate(new Date());
-      params += '&days=' + self.days;
-
-      fetch('/api/posts' + params)
-        .then(function(response) {
-          return response.json();
-        })
-        .catch(error => console.error('Error:', error))
-        .then(function(json) {
-          json.forEach(function(p) {
-            var postDate = moment(p.date);
-            self.dates.forEach(function(d) {
-              if (d.month == postDate.month() && d.day == postDate.date()) {
-                d.posts.push(p);
-              }
-            });
-          });
-        });
+      this.loadData();
     },
     mounted: function() {},
     computed: {},
     updated: function() {},
     methods: {
-      addTheme: function() {},
+      loadData: function() {
+        var self = this;
+        var start = moment(self.start); // Need to make a copy to edit
+        for (var i = 0; i < self.days - 1; i++) {
+          var m = start.add(i, 'days');
+          self.dates.push({
+            month: m.month(),
+            day: m.date(),
+            display: m.format(longDateFormat),
+            query: m.format(pythonDateFormat),
+            posts: [],
+          });
+        }
+
+        var params = '?';
+        params += 'start=' + self.start.format(pythonDateFormat);
+        params += '&days=' + self.days;
+
+        fetch('/api/posts' + params)
+          .then(function(response) {
+            return response.json();
+          })
+          .catch(error => console.error('Error:', error))
+          .then(function(json) {
+            for (var p of json) {
+              var postDate = moment(p.date).utc();
+              for (var d of self.dates) {
+                console.debug(
+                  'postDate: ' + postDate.month() + ' ' + postDate.date() + ' date: ' + d.month + ' ' + d.day,
+                );
+                if (d.month == postDate.month() && d.day == postDate.date()) {
+                  d.posts.push(p);
+                  break;
+                }
+              }
+            }
+          });
+      },
+      nextPage: function() {
+        this.dates = [];
+        this.start.add(this.days, 'days');
+        this.loadData();
+      },
+      prevPage: function() {
+        this.dates = [];
+        this.start.subtract(this.days, 'days');
+        this.loadData();
+      },
     },
   });
 
@@ -69,7 +90,7 @@ if (window.Vue) {
         return SnuOwnd.getParser().render(this.text);
       },
       prettyDate: function() {
-        return moment(self.date).format('dddd, MMMM Do YYYY');
+        return moment(self.date).format(longDateFormat);
       },
     },
     methods: {
@@ -122,7 +143,7 @@ if (window.Vue) {
           self.user = json.user;
           self.text = json.text;
           var m = new moment(json.date);
-          self.date = m.utc().format('YYYY-MM-DD');
+          self.date = m.utc().format(pythonDateFormat);
         });
     },
     computed: {
@@ -130,7 +151,7 @@ if (window.Vue) {
         return SnuOwnd.getParser().render(this.text);
       },
       prettyDate: function() {
-        return moment(self.date).format('dddd, MMMM Do YYYY');
+        return moment(self.date).format(longDateFormat);
       },
     },
     methods: {
@@ -170,15 +191,4 @@ if (window.Vue) {
   const app = new Vue({
     router,
   }).$mount('#app');
-
-  /* Utility functions */
-
-  // Format the date for our requirements as year-month-day
-  function formatDate(date) {
-    var d = 'Y-m-d'
-      .replace('Y', date.getFullYear())
-      .replace('m', date.getMonth() + 1)
-      .replace('d', date.getDate());
-    return d;
-  }
 }

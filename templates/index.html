@@ -9,6 +9,9 @@
         <div class="ps-posts-list">
             <div class="post" v-for="d in dates">
                 <span v-html="d.display"></span>
+                <div v-if="d.posts.length > 1" class="error">
+                    Error: Too many posts in one day!
+                </div>
                 <div v-for="p in d.posts" v-if="d.posts.length > 0">
                     <span v-html="p.title"></span>
                     <span>
@@ -18,6 +21,10 @@
                 <div v-if="d.posts.length === 0">
                     <router-link :to="'/post/new?d=' + d.query">Add a theme!</router-link>
                 </div>
+            </div>
+            <div class="buttons">
+                <button @click="prevPage">Past 14 days</button>
+                <button @click="nextPage">Next 14 days</button>
             </div>
         </div>
     </script>
