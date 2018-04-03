@@ -24,12 +24,12 @@ if (window.Vue) {
         var self = this;
         var start = moment(self.start); // Need to make a copy to edit
         for (var i = 0; i < self.days - 1; i++) {
-          var m = start.add(i, 'days');
+          start.add(1, 'days');
           self.dates.push({
-            month: m.month(),
-            day: m.date(),
-            display: m.format(longDateFormat),
-            query: m.format(pythonDateFormat),
+            month: start.month(),
+            day: start.date(),
+            display: start.format(longDateFormat),
+            query: start.format(pythonDateFormat),
             posts: [],
           });
         }
