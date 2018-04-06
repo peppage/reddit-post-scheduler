@@ -1,11 +1,9 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<div id="app" v-cloak>
+    <router-view></router-view>
+</div>
 
-{% block content %}
-    <div id="app">
-        <router-view></router-view>
-    </div>
-
-    <script type="text/x-template" id="calendarList">
+<script type="text/x-template" id="calendarList">
         <div class="ps-posts-list">
             <div class="post" v-for="d in dates">
                 <h3 v-html="d.display"></h3>
@@ -29,51 +27,63 @@
         </div>
     </script>
 
-    <script type="text/x-template" id="post">
-        <div class="">
-            <div class="ps-post">
-                <h1>Schedule a theme for <span v-html="prettyDate"></span></h1>
-                <div>
-                    <label>User:</label>
-                    <input type="text" name="user" v-model="user">
-                </div>
-                <div>
-                    <label>Title</label>
-                    <input type="text" name="title" v-model="title">
-                </div>
-                <div>
-                    <label>Spoiler</label>
-                    <input type="text" name="spoiler" v-model="spoiler">
-                </div>
-                <div>
-                    <label>Text</label>
-                    <textarea v-model="text"></textarea>
-                </div>
-                <div>
-                    <label>Date</label>
-                    <input type="text" name="date" v-model="date">
-                </div>
+<script type="text/x-template" id="post">
+        <div class="ps-post">
+            <h1 class="ps-post-title">Schedule a theme for <span v-html="prettyDate"></span></h1>
+            <div class="ps-post__wrapper">
+                <div class="ps-post-fields">
+                    <div class="field">
+                        <label>User:</label>
+                        <div class="control">
+                            <input type="text" name="user" v-model="user">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Title</label>
+                        <div class="control">
+                            <input type="text" name="title" v-model="title">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Spoiler</label>
+                        <div class="control">
+                            <input type="text" name="spoiler" v-model="spoiler">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Text</label>
+                        <div class="control">
+                            <textarea v-model="text"></textarea>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Date</label>
+                        <div class="control">
+                            <input type="text" name="date" v-model="date">
+                        </div>
+                    </div>
 
-                <button @click="savePost">Submit</button>
-            </div>
-            <div class="ps-format-instructions">
-                <pre>
-*italics*
-**bold**
-super^script
-~~strikethrough~~
-[reddit!](http://reddit.com)
-(tab or 4 spaces)preformatted text
-blah blah `inline code text` blah blah
-\*escape the formatting syntax\*
-                </pre>
-                <div class="ps-post-preview">
-                    <h3>Preview</h3>
-                    <div v-html="formattedText">
+                    <div class="field">
+                        <button @click="savePost" class="button">Submit</button>
+                    </div>
+                </div>
+                <div class="ps-format-instructions">
+                    <pre>
+    *italics*
+    **bold**
+    super^script
+    ~~strikethrough~~
+    [reddit!](http://reddit.com)
+    (tab or 4 spaces)preformatted text
+    blah blah `inline code text` blah blah
+    \*escape the formatting syntax\*
+                    </pre>
+                    <div class="ps-post-preview">
+                        <h3>Preview</h3>
+                        <div v-html="formattedText">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </script>
-    
-{% endblock %}
+    </script> {% endblock %}
