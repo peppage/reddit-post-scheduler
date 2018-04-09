@@ -18,6 +18,7 @@ from datetime import datetime
 # search for dupes
 # add who created the post to the db
 # last edited the post (versioning?)
+# smarter editor
 
 
 config = ConfigParser.RawConfigParser()
@@ -38,7 +39,6 @@ def login_required(function_to_protect):
     @wraps(function_to_protect)
     def wrapper(*args, **kwargs):
         user_id = session.get('user_id')
-        print(user_id)
         if user_id:
             return function_to_protect(*args, **kwargs)
         else:
