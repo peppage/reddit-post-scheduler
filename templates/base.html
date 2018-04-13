@@ -12,8 +12,21 @@
     <script src="/static/snuownd.js"></script>
 </head>
 
-<body>
-    {% block content %}{% endblock %}
+<body class="site">
+    <header>
+        <h1><a href="/">SketchDaily</a></h1>
+    </header>
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <div>Reddit post scheduler created for SketchDaily.</div>
+        <div>
+            <a href="https://github.com/peppage/reddit-post-scheduler">
+                <img src="/static/GitHub-Mark-Light-32px.png" />
+            </a>
+        </div>
+    </footer>
     <script src="/static/site.js"></script>
 </body>
 
