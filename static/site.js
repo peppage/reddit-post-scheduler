@@ -8,7 +8,7 @@ if (window.Vue) {
     template: '#calendarList',
     data() {
       return {
-        start: moment(),
+        start: moment().add(1, 'days'),
         dates: [],
         days: 14,
       };
@@ -23,8 +23,7 @@ if (window.Vue) {
       loadData: function() {
         var self = this;
         var start = moment(self.start); // Need to make a copy to edit
-        for (var i = 0; i < self.days - 1; i++) {
-          start.add(1, 'days');
+        for (var i = 0; i < self.days; i++) {
           self.dates.push({
             month: start.month(),
             day: start.date(),
@@ -32,6 +31,7 @@ if (window.Vue) {
             query: start.format(pythonDateFormat),
             posts: [],
           });
+          start.add(1, 'days');
         }
 
         var params = '?';
