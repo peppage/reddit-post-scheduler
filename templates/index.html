@@ -21,8 +21,8 @@
                 </div>
             </div>
             <div class="buttons">
-                <button @click="prevPage">Past 14 days</button>
-                <button @click="nextPage">Next 14 days</button>
+                <button @click="prevPage" v-html="previousButton" class="button"></button>
+                <button @click="nextPage" v-html="nextButton" class="button"></button>
             </div>
         </div>
     </script>

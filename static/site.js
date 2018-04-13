@@ -17,7 +17,14 @@ if (window.Vue) {
       this.loadData();
     },
     mounted: function() {},
-    computed: {},
+    computed: {
+      nextButton: function() {
+        return 'Next ' + this.days + ' days';
+      },
+      previousButton: function() {
+        return 'Prev ' + this.days + ' days';
+      },
+    },
     updated: function() {},
     methods: {
       loadData: function() {
