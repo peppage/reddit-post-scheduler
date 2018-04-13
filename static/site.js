@@ -77,6 +77,7 @@ if (window.Vue) {
         spoiler: '',
         user: '',
         text: '',
+        error: false,
       };
     },
     created: function() {
@@ -93,22 +94,24 @@ if (window.Vue) {
     methods: {
       savePost: function() {
         var self = this;
+        self.error = false;
 
-        var formData = new FormData();
-        formData.append('title', self.title);
-        formData.append('spoiler', self.spoiler);
-        formData.append('user', self.user);
-        formData.append('text', self.text);
-        formData.append('date', self.date);
-
-        fetch('/api/post', {
-          method: 'POST',
-          body: formData,
-        })
-          .then(response => response.json())
-          .catch(error => console.error('Error:', error))
-          .then(function(json) {
-            router.push({ path: '/' });
+        validatePost(self)
+          .then(function() {
+            generateFormData(self).then(formData => {
+              fetch('/api/post', {
+                method: 'POST',
+                body: formData,
+              })
+                .then(response => response.json())
+                .catch(error => console.error('Error:', error))
+                .then(function(json) {
+                  router.push({ path: '/' });
+                });
+            });
+          })
+          .catch(function() {
+            self.error = true;
           });
       },
     },
@@ -124,6 +127,7 @@ if (window.Vue) {
         user: '',
         text: '',
         date: '',
+        error: false,
       };
     },
     created: function() {
@@ -154,26 +158,49 @@ if (window.Vue) {
     methods: {
       savePost: function() {
         var self = this;
+        self.error = false;
 
-        var formData = new FormData();
-        formData.append('title', self.title);
-        formData.append('spoiler', self.spoiler);
-        formData.append('user', self.user);
-        formData.append('text', self.text);
-        formData.append('date', self.date);
-
-        fetch('/api/post/' + self.id, {
-          method: 'POST',
-          body: formData,
-        })
-          .then(response => response.json())
-          .catch(error => console.error('Error:', error))
-          .then(function(json) {
-            router.push({ path: '/' });
+        validatePost(self)
+          .then(function() {
+            generateFormData(self).then(formData => {
+              fetch('/api/post/' + self.id, {
+                method: 'POST',
+                body: formData,
+              })
+                .then(response => response.json())
+                .catch(error => console.error('Error:', error))
+                .then(function(json) {
+                  router.push({ path: '/' });
+                });
+            });
+          })
+          .catch(function() {
+            self.error = true;
           });
       },
     },
   });
+
+  function validatePost(self) {
+    return new Promise((resolve, reject) => {
+      if (self.title === '' || self.spoiler === '' || self.user === '' || self.text === '' || self.date === '') {
+        reject();
+      }
+      resolve();
+    });
+  }
+
+  function generateFormData(self) {
+    return new Promise((resolve, reject) => {
+      var formData = new FormData();
+      formData.append('title', self.title);
+      formData.append('spoiler', self.spoiler);
+      formData.append('user', self.user);
+      formData.append('text', self.text);
+      formData.append('date', self.date);
+      resolve(formData);
+    });
+  }
 
   const routes = [
     { path: '/', component: postList },

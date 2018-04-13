@@ -30,6 +30,9 @@
 <script type="text/x-template" id="post">
         <div class="ps-post">
             <h1 class="ps-post-title">Schedule a theme for <span v-html="prettyDate"></span></h1>
+            <div class="ps-post__error" v-if="error">
+                Please fill in all fields before saving.
+            </div>
             <div class="ps-post__wrapper">
                 <div class="ps-post-fields">
                     <div class="field">
