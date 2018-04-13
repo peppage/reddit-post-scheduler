@@ -9,6 +9,7 @@ name = "pypi"
 flask = "*"
 praw = "*"
 sqlalchemy = "*"
+apscheduler = "*"
 
 [requires]
 python_version = "2.7"

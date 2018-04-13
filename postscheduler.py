@@ -1,6 +1,5 @@
 # http://flask.pocoo.org/docs/0.12/
 from flask import redirect, Flask, render_template, session, request, flash, url_for, g, jsonify, request, send_from_directory
-import ConfigParser  # https://docs.python.org/2/library/configparser.html
 import praw  # https://praw.readthedocs.io/en/latest/index.html
 import uuid
 from functools import wraps
@@ -8,7 +7,8 @@ from json_encoder import AlchemyEncoder
 from models import Post
 from base import Session, engine, Base
 from datetime import datetime
-
+from apscheduler.schedulers.background import BackgroundScheduler
+import settings
 
 # Todo
 # Schedule non theme posts
@@ -19,20 +19,42 @@ from datetime import datetime
 # add who created the post to the db
 # last edited the post (versioning?)
 # smarter editor
-
-
-config = ConfigParser.RawConfigParser()
-config.read('scheduler.cfg')
-client_id = config.get('Reddit', 'client_id')
-client_secret = config.get('Reddit', 'client_secret')
-redirect_uri = config.get('Reddit', 'redirect_uri')
-user_agent = config.get('Reddit', 'user_agent')
-subreddit = config.get('App', 'subreddit')
+# Should the post be in a popup and then have a close button?
+# Go back to top after moving to next page
 
 app = Flask(__name__)
-app.secret_key = config.get('App', 'secret_key')
+app.secret_key = settings.secret_key
 app.json_encoder = AlchemyEncoder
 Base.metadata.create_all(engine)
+
+sched = BackgroundScheduler()
+
+
+@sched.scheduled_job('cron', id="do_post", hour=settings.hour, minute=settings.minute)
+def postJob():
+    now = datetime.now()
+    date = datetime(now.year, now.month, now.day)
+    s = Session()
+    p = s.query(Post).filter(Post.date == date).one()
+    s.close()
+    sub = getRedditScriptCreds().subreddit(settings.subreddit)
+    post(sub, p)
+    updateDescription(sub, p.spoiler)
+
+
+def updateDescription(subreddit, spoiler):
+    splitDesctiption = subreddit.description.split("#####")
+    newDescription = splitDesctiption[0] + "##### " + \
+        settings.description_prefix + ' ' + spoiler
+    subreddit.mod.update(description=newDescription)
+
+
+def post(subreddit, post):
+    text = post.text + "\n ***** \n Theme  posted by " + post.user
+    subreddit.submit(post.title, text)
+
+
+sched.start()
 
 
 def login_required(function_to_protect):
@@ -60,7 +82,7 @@ def login():
 
 @app.route('/reddit')
 def redditLogin():
-    reddit = getReddit()
+    reddit = getRedditWebCreds()
     state = str(uuid.uuid4())
     session['reddit_state'] = state
     url = reddit.auth.url(['identity', 'mysubreddits'], state, 'temporary')
@@ -76,13 +98,13 @@ def redditCallback():
         flash("Failed to login with reddit", 'error')
         return redirect(url_for('login'))
 
-    reddit = getReddit()
+    reddit = getRedditWebCreds()
     reddit.auth.authorize(code)
 
     subReddits = reddit.user.moderator_subreddits()
     auth = False
     for s in subReddits:
-        if s == subreddit:
+        if s == settings.subreddit:
             auth = True
 
     if auth:
@@ -141,8 +163,17 @@ def send_static(path):
     return send_from_directory('static', path)
 
 
-def getReddit():
-    return praw.Reddit(client_id=client_id,
-                       client_secret=client_secret,
-                       redirect_uri=redirect_uri,
-                       user_agent=user_agent)
+def getRedditWebCreds():
+    return praw.Reddit(client_id=settings.web_client_id,
+                       client_secret=settings.web_client_secret,
+                       redirect_uri=settings.web_redirect_uri,
+                       user_agent=settings.web_user_agent)
+
+
+def getRedditScriptCreds():
+    return praw.Reddit(client_id=settings.script_client_id,
+                       client_secret=settings.script_client_secret,
+                       redirect_uri=settings.script_redirect_uri,
+                       user_agent=settings.script_user_agent,
+                       password=settings.script_password,
+                       username=settings.script_username)
