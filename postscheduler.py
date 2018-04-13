@@ -115,6 +115,7 @@ def PostApi(post_id):
         post.date = datetime.strptime(request.form['date'], '%Y-%m-%d')
         post.user = request.form['user']
         post.title = request.form['title']
+        post.spoiler = request.form['spoiler']
         s.commit()
         s.close()
         return jsonify()
@@ -127,7 +128,8 @@ def AddPost():
     date = datetime.strptime(request.form['date'], '%Y-%m-%d')
     user = request.form['user']
     title = request.form['title']
-    p = Post(text, date, user, title)
+    spoiler = request.form['spoiler']
+    p = Post(text, date, user, title, spoiler)
     s.add(p)
     s.commit()
     s.close()
