@@ -96,7 +96,7 @@ if (window.Vue) {
         return SnuOwnd.getParser().render(this.text);
       },
       prettyDate: function() {
-        return moment(self.date).format(longDateFormat);
+        return moment(this.date).format(longDateFormat);
       },
     },
     methods: {
