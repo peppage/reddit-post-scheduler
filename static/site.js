@@ -42,7 +42,8 @@ if (window.Vue) {
         }
 
         var params = '?';
-        params += 'start=' + self.start.format(pythonDateFormat);
+        var tmpTime = self.start.clone();
+        params += 'start=' + tmpTime.add(-1, 'days').format(pythonDateFormat);
         params += '&days=' + self.days;
 
         fetch('/api/posts' + params)
